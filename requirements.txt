@@ -1,0 +1,9 @@
+nltk
+flair
+cytoolz
+pytorch-pretrained-bert
+horovod
+lmdb
+lz4
+msgpack-numpy
+tensorboard
