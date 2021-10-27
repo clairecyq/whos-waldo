@@ -2,7 +2,7 @@
 Download links and PyTorch implementation of "Who's Waldo? Linking People Across Text and Images", ICCV 2021.
 > Who's Waldo? Linking People Across Text and Images
 >
-> [Claire Yuqing Cui*](https://github.com/clairecyq), [Apoorv Khandelwal*](https://apoorvkh.com), [Yoav Artzi](https://yoavartzi.com), [Noah Snavely](https://www.cs.cornell.edu/~snavely/), [Hadar Averbuch-Elor](cs.cornell.edu/~hadarelor)
+> [Claire Yuqing Cui*](https://github.com/clairecyq), [Apoorv Khandelwal*](https://apoorvkh.com), [Yoav Artzi](https://yoavartzi.com), [Noah Snavely](https://www.cs.cornell.edu/~snavely/), [Hadar Averbuch-Elor](https://cs.cornell.edu/~hadarelor)
 > ICCV 2021
 >
 #### [Project Page](https://whoswaldo.github.io) | [Paper](https://arxiv.org/abs/2108.07253) 
