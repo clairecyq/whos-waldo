@@ -32,7 +32,7 @@ Process visual information for each split:
 ```
 python preprocess/create_imgdb.py --output {imgdb-name} --split {split}
 ```
-Note that you will need to extract features for the images before creating the imgdb. We used this [repo](https://github.com/peteanderson80/bottom-up-attention) for feature extraction.
+Note that you will need to extract features for the images before creating the imgdb. We used this [repo](https://github.com/peteanderson80/bottom-up-attention) for feature extraction. But you may find this [PyTorch re-implementation](https://github.com/MILVLG/bottom-up-attention.pytorch) easier to use instead.
 
 ### 4. Set up Docker container
 run ```launch_container.sh``` with the appropriate paths for each argument. 
