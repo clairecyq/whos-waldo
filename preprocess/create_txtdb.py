@@ -50,7 +50,7 @@ def replace_name_token_cased(tokens):
 
 
 def process_people(opt, db, tokenizer):
-    annotation_json_path = os.path.join(annotation_dir, opt.ann, opt.split + '.json')
+    annotation_json_path = os.path.join(annotation_dir, opt.split + '.json')
     examples = json.load(io.open(annotation_json_path, 'r', encoding='utf-8'))
     print(f'loaded {len(examples)} examples for {opt.split}...')
 
@@ -116,8 +116,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--split', required=True,
                         help='which split')
-    parser.add_argument('--ann', required=True,
-                        help='name of directory containing annotations')
+    # parser.add_argument('--ann', required=True,
+    #                     help='name of directory containing annotations')
     parser.add_argument('--output', required=True,
                         help='output dir of DB')
     parser.add_argument('--vocab', default='./dataset_meta/vocab-cased-with-name.txt',

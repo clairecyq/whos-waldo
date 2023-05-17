@@ -22,9 +22,9 @@ import msgpack_numpy
 
 msgpack_numpy.patch()
 
-img_db_dir = './storage/img_db'
+img_db_dir = '/mnt2/user15/whos_whaldo/whos_waldo/img_db'
 split_dir = './dataset_meta/splits'
-npz_dir = '/whos-waldo-features'
+npz_dir = './img_feats'
 
 
 def read_json(json_path):
@@ -42,20 +42,26 @@ def _compute_nbb(img_dump, conf_th, max_bb, min_bb):
 def load_npz(conf_th, max_bb, min_bb, num_bb, fname, keep_all=False):
     try:
         img_dump = np.load(fname, allow_pickle=True)
-        if keep_all:
-            nbb = img_dump['norm_bb'].shape[0]
-        else:
-            nbb = _compute_nbb(img_dump, conf_th, max_bb, min_bb, num_bb)
+
+        # if keep_all:
+        nbb = img_dump['num_bbox']#.shape[0]
+
+        # else:
+        #print(img_dump)
+        #nbb = _compute_nbb(img_dump, conf_th, max_bb, min_bb)
+
         dump = {}
         for key, arr in img_dump.items():
-            if arr.dtype == np.float32:
+            if arr.dtype == np.float32 or arr.dtype == np.int64:
                 arr = arr.astype(np.float16)
             if arr.ndim == 2:
                 dump[key] = arr[:nbb, :]
             elif arr.ndim == 1:
                 dump[key] = arr[:nbb]
-            else:
-                raise ValueError('wrong ndim')
+
+
+                #print(key, arr)
+                #raise ValueError('num_bb')
     except Exception as e:
         # corrupted file
         print(f'corrupted file {fname}', e)
@@ -96,11 +102,17 @@ def main(opts):
     with open(split_file, 'r') as f:
         split_lst = [id.rstrip('\n') for id in f.readlines()]
     print(f'There are in total {len(split_lst)} examples in {opts.split}')
+    #exit(0)
 
     files = []
     for id in split_lst:
         folder = os.path.join(npz_dir, id)
-        npz_files = [f for f in glob.glob(os.path.join(folder, '*.*')) if f.endswith('.npz')]
+        #npz_files = [f for f in glob.glob(os.path.join(folder, '*.*')) if f.endswith('.npz')]
+        if os.path.exists(folder + ".npz"):
+            npz_files = [folder + ".npz"]
+        else:
+            continue
+
         try:
             assert len(npz_files) == 1
         except:
@@ -110,7 +122,7 @@ def main(opts):
         files.append(npz_fn)
 
     print("Number of files: " + str(len(files)))
-
+    #exit(0)
     load = load_npz(opts.conf_th, opts.max_bb, opts.min_bb, opts.num_bb,
                     keep_all=True)
 
@@ -119,23 +131,26 @@ def main(opts):
         for i, (fname, features, nbb) in enumerate(
                 pool.imap(load, files, chunksize=128)):
             if not features:
+                #print("corrupeted !!!")
                 continue  # corrupted feature
             if opts.compress:
                 dump = dumps_npz(features, compress=True)
             else:
                 dump = dumps_msgpack(features)
-            id = files[i].split('/')[-2]
+            id = files[i].split('/')[-1].split(".")[0]
+            
             txn.put(key=id.encode('utf-8'), value=dump)
             if i % 1000 == 0:
                 txn.commit()
                 txn = env.begin(write=True)
-            name2nbb[id] = nbb
+            name2nbb[id] = nbb.tolist()
             pbar.update(1)
         txn.put(key=b'__keys__',
                 value=json.dumps(list(name2nbb.keys())).encode('utf-8'))
         txn.commit()
         env.close()
     with open(f'{output_dir}/name2nbb.json', 'w') as f:
+        print(name2nbb)
         json.dump(name2nbb, f)
 
 

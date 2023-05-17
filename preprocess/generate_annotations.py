@@ -85,15 +85,22 @@ def generate_annotation(ex, filtered_gt_indices=None):
 def main(output):
     if not os.path.exists(os.path.join(annotations_dir, output)):
         os.mkdir(os.path.join(annotations_dir, output))
-    for split in ['test', 'val', 'train']:
+    for split in ['test', 'val', 'train']: #'test', 'val',
         split_file = os.path.join(split_dir, f'{split}.txt')
         with open(split_file, 'r') as fp:
             split_lst = read_txt(fp)
         print('split length for ' + split + ': ', len(split_lst))
         lst = []
         for ex in split_lst:
-            d = generate_annotation(ex)
-            lst.append(d)
+            folder = os.path.join(whos_waldo_dir, ex, 'caption.txt')
+
+            if os.path.exists(folder):
+
+                d = generate_annotation(ex)
+                lst.append(d)
+            else:
+                pass
+                #print(ex)
         print(f'{split} of length {len(lst)}')
 
         with open(os.path.join(annotations_dir, output, split + '.json'), 'w') as fp:
@@ -105,8 +112,13 @@ def main(output):
         print('split length for ' + split + ': ', len(split_json))
         lst = []
         for ex, filtered_gt_indices in split_json.items():
-            d = generate_annotation(ex, filtered_gt_indices)
-            lst.append(d)
+            folder = os.path.join(whos_waldo_dir, ex, 'caption.txt')
+            if os.path.exists(folder):
+                d = generate_annotation(ex, filtered_gt_indices)
+                lst.append(d)
+            else:
+                pass
+                #print(ex)
         print(f'{split} of length {len(lst)}')
 
         with open(os.path.join(annotations_dir, output, split + '.json'), 'w') as fp:
